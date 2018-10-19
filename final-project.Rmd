@@ -1,0 +1,42 @@
+---
+title: "Final Project"
+author: "Sara Kvaska"
+date: "10/18/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library("rjson")
+library(readxl)
+# json files
+json_file_florida <- "https://services.arcgis.com/8Pc9XBTAsYuxx9Ny/arcgis/rest/services/BusRoutes_gdb/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json"
+json_data <- fromJSON(file=json_file_florida)
+poverty_by_state <- read_excel("poverty_us.xls")
+json_file_detroit <- "https://data.detroitmi.gov/api/views/j8mx-tq87/rows.json?accessType=DOWNLOAD"
+json_detroit <- fromJSON(file=json_file_detroit)
+json_file_san_Fran <- "https://data.sfgov.org/api/views/my8t-jqzp/rows.json?accessType=DOWNLOAD"
+json_san_Fran <- fromJSON(file=json_file_san_Fran)
+json_file_boston <- "https://docs.digital.mass.gov/api/3/action/package_show?id=369298c7-bfec-4e7f-830c-99970d64f779"
+json_boston <- fromJSON(file=json_file_boston)
+# fact files -- that shows poverty of cities
+miami_facts <- read_csv("poverty_Miami_Dade.csv")
+san_fran_facts <- read_csv("san_fran.csv")
+detroit_facts <- read_csv("poverty_detroit.csv")
+cambridge_facts <- read_csv("cambridge_facts.csv")
+# poverty in us
+us_poverty <- read_excel("poverty_us.xls")
+```
+
+### I am going to use the data I have downloaded to show transit routes and poverty levels of 4 cities around the country, and then determine if there exists a relationship between the two. I picked these cities based on this image from the US Census: 
+![](US_Census_Poverty.png)
+
+### I chose Florida and Detroit because their levels of poverty were very high, and San Francisco and Boston because their levels were relatively low. Some cities did not have route data available, so I chose based on what I could find and make use of.
+
+### I downloaded my data from these sites: 
+#### https://www.census.gov/quickfacts/fact/table/US/PST045217
+#### https://docs.digital.mass.gov/dataset/massgis-data-mbta-bus-routes-and-stops
+#### https://data.sfgov.org/Transportation/MTA-equitystrategy_nhoods/twv9-dib2
+#### https://data.detroitmi.gov/Transportation/DDOT-Bus-Routes/tugj-7eqq/data
+#### http://gis-mdc.opendata.arcgis.com/datasets/a33afaedf9264a97844080839a6f5ec9_0/geoservice
