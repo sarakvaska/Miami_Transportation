@@ -40,3 +40,9 @@ us_poverty <- read_excel("poverty_us.xls")
 #### https://data.sfgov.org/Transportation/MTA-equitystrategy_nhoods/twv9-dib2
 #### https://data.detroitmi.gov/Transportation/DDOT-Bus-Routes/tugj-7eqq/data
 #### http://gis-mdc.opendata.arcgis.com/datasets/a33afaedf9264a97844080839a6f5ec9_0/geoservice
+
+### I still need to clean the data, but here is a summary stat from the Miami Data:
+```{r}
+summary(miami_facts)
+```
+
