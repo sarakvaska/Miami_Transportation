@@ -25,6 +25,8 @@ library(data.table)
 library(ggrepel)
 library(maptools)
 library(leaflet)
+library(readxl)
+library(rgdal)
 # load data
 poverty_by_state <- read_excel("poverty_us.xls")
 miami_facts <- read_csv("poverty_Miami_Dade.csv")
@@ -47,15 +49,24 @@ res_routes <- readOGR(dsn = bus_routes, layer = "OGRGeoJSON")
 res_stops <-  readOGR(dsn = bus_stops, layer = "OGRGeoJSON")
 geojson <- jsonlite::fromJSON(bus_routes)
 geojson1 <- jsonlite::fromJSON(bus_stops)
+zip_code <- "https://opendata.arcgis.com/datasets/fee863cb3da0417fa8b5aaf6b671f8a7_0.geojson"
+zip_boundary <- readOGR(dsn = zip_code, layer = "OGRGeoJSON")
+geojson2 <- jsonlite::fromJSON(zip_code)
 leaflet() %>%
-  addTiles() %>%  # Add default OpenStreetMap map tiles
+  addProviderTiles(providers$Esri.NatGeoWorldMap) %>% # Add default OpenStreetMap map tiles
   setView(lng=-80.191788, lat=25.761681, zoom = 10) %>%
-  addPolygons(data = res, opacity = .5, color = "#0064BE", weight = 2, smoothFactor = 5, 
-              fill = FALSE)
-leaflet(miami2) %>%
-  addTiles() %>%  # Add default OpenStreetMap map tiles
+  addPolygons(data = res_routes, opacity = .5, color = "#00a1e4", 
+              weight = 3, smoothFactor = 5, fill = FALSE)
+leaflet() %>%
+  addProviderTiles(providers$Esri.NatGeoWorldMap) %>% # Add default OpenStreetMap map tiles
   setView(lng=-80.191788, lat=25.761681, zoom = 10) %>%
-  addPolygons(data = res, opacity = .5, color = "#0064BE", weight = 2, smoothFactor = 5, 
-              fill = FALSE)
+  addCircleMarkers(data = res_stops, radius = 5, fillColor = "#00a1e4",
+                 color = "white", fillOpacity = 10, opacity = .5,
+                 stroke = TRUE)
+leaflet() %>%
+  addProviderTiles(providers$Esri.NatGeoWorldMap) %>% # Add default OpenStreetMap map tiles
+  setView(lng=-80.191788, lat=25.761681, zoom = 10) %>%
+  addPolygons(data=zip_boundary, opacity = .5, fillColor = "#00a1e4", 
+              weight = 3, color = "white", fillOpacity = .5)
 ```
 
