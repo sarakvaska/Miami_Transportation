@@ -54,7 +54,7 @@ ui <- fluidPage(
    # Output: Tabset with routes, stops, zipcodes
    tabsetPanel(type = "tabs",
                tabPanel("Routes", leafletOutput("map")),
-               tabPanel("Zip Codes", leafletOutput("zipcodes")))
+               tabPanel("Bus Stops and Zipcode Boundaries", leafletOutput("zipcodes")))
    )
 # function getColorZip(zip_boundary@data[["ZIPCODE"]]) {
     #$('.random').css('color', localObj.color );
@@ -70,7 +70,7 @@ server <- function(input, output) {
     addProviderTiles(providers$Esri.WorldImagery) %>%
     setView(lng=-80.191788, lat=25.761681, zoom = 10) %>%
     addGeoJSONv2(geojson(), weight = 3, color = "#00a1e4", opacity = 1, 
-                 fill = FALSE, popupProperty = "popup", labelProperty = "RTNAME",
+                 fill = FALSE, labelProperty = "RTNAME",
                  highlightOptions = highlightOptions(weight = 2, color='white', 
                                                      fillOpacity = 1, opacity = 1,
                                                      bringToFront = TRUE, sendToBack = TRUE)) 
@@ -79,14 +79,22 @@ server <- function(input, output) {
     leaflet() %>%
       addProviderTiles(providers$Esri.WorldImagery) %>% # Add default OpenStreetMap map tiles
       setView(lng=-80.191788, lat=25.761681, zoom = 10) %>%
-      addCircleMarkers(data = res_stops, radius = 1, fillColor = "#00a1e4",
-                       color = "white", fillOpacity = 10, opacity = .5) %>%
+      addCircleMarkers(data = res_stops, 
+                       clusterOptions = markerClusterOptions(iconCreateFunction =
+                                              JS("
+                                                 function(cluster) {
+                                                 return new L.DivIcon({
+                                                 html: '<div style=\"background-color:rgba(255, 255, 255, 1)\"><span>' + cluster.getChildCount() + '</div><span>',
+                                                 className: 'marker-cluster'
+                                                 });
+                                                 }"))) %>%
       addPolygons(data=zip_boundary, opacity = 1, fillColor = "#00a1e4", 
                   weight = 3, color = "#2ab7ca ", fillOpacity = .25,
                   highlightOptions = highlightOptions(color = "white", weight = 2,
                                                       bringToFront = TRUE), 
                   label = zip_boundary@data[["ZIPCODE"]])
   })
+  markerClusterOptions()
 }
 
 # Run the application 
