@@ -1,0 +1,12 @@
+name: poverty_and_transportation
+title: poverty_and_transportation
+username:
+account: sara-kvaska
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 550683
+bundleId: 1679620
+url: https://sara-kvaska.shinyapps.io/poverty_and_transportation/
+when: 1541227983.13094
+asMultiple: FALSE
+asStatic: FALSE

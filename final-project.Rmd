@@ -27,6 +27,7 @@ library(maptools)
 library(leaflet)
 library(readxl)
 library(rgdal)
+library(janitor)
 # load data
 poverty_by_state <- read_excel("poverty_us.xls")
 miami_facts <- read_csv("poverty_Miami_Dade.csv")
@@ -53,10 +54,11 @@ zip_code <- "https://opendata.arcgis.com/datasets/fee863cb3da0417fa8b5aaf6b671f8
 zip_boundary <- readOGR(dsn = zip_code, layer = "OGRGeoJSON")
 geojson2 <- jsonlite::fromJSON(zip_code)
 leaflet() %>%
-  addProviderTiles(providers$Esri.NatGeoWorldMap) %>% # Add default OpenStreetMap map tiles
+  addProviderTiles(providers$Esri.WorldImagery) %>% # Add default OpenStreetMap map tiles
   setView(lng=-80.191788, lat=25.761681, zoom = 10) %>%
   addPolygons(data = res_routes, opacity = .5, color = "#00a1e4", 
-              weight = 3, smoothFactor = 5, fill = FALSE)
+              weight = 3, smoothFactor = 5, fill = FALSE, 
+              popup = res_routes@data[["RTNAME"]])
 leaflet() %>%
   addProviderTiles(providers$Esri.NatGeoWorldMap) %>% # Add default OpenStreetMap map tiles
   setView(lng=-80.191788, lat=25.761681, zoom = 10) %>%
@@ -67,6 +69,14 @@ leaflet() %>%
   addProviderTiles(providers$Esri.NatGeoWorldMap) %>% # Add default OpenStreetMap map tiles
   setView(lng=-80.191788, lat=25.761681, zoom = 10) %>%
   addPolygons(data=zip_boundary, opacity = .5, fillColor = "#00a1e4", 
-              weight = 3, color = "white", fillOpacity = .5)
+              weight = 3, color = "white", fillOpacity = .5, 
+              popup = zip_boundary@data[["ZIPCODE"]])
+```
+
+```{r}
+routes_csv <- read_csv("Bus_Route.csv")
+stops_csv <- read_csv("Bus_Stop.csv")
+count_routes <- routes_csv %>%
+  count(RTNAME)
 ```
 
