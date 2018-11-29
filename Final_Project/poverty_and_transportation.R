@@ -73,13 +73,15 @@ server <- function(input, output) {
                  fill = FALSE, labelProperty = "RTNAME",
                  highlightOptions = highlightOptions(weight = 2, color='white', 
                                                      fillOpacity = 1, opacity = 1,
-                                                     bringToFront = TRUE, sendToBack = TRUE)) 
+                                                     bringToFront = TRUE, sendToBack = TRUE))
   })
   output$zipcodes <- renderLeaflet({
     leaflet() %>%
       addProviderTiles(providers$Esri.WorldImagery) %>% # Add default OpenStreetMap map tiles
       setView(lng=-80.191788, lat=25.761681, zoom = 10) %>%
-      addCircleMarkers(data = res_stops, 
+      addCircleMarkers(data = res_stops, radius = 5, fillColor = "#00a1e4",
+                       color = "white", fillOpacity = 10, opacity = .5,
+                       stroke = TRUE, 
                        clusterOptions = markerClusterOptions(iconCreateFunction =
                                               JS("
                                                  function(cluster) {
@@ -92,9 +94,11 @@ server <- function(input, output) {
                   weight = 3, color = "#2ab7ca ", fillOpacity = .25,
                   highlightOptions = highlightOptions(color = "white", weight = 2,
                                                       bringToFront = TRUE), 
-                  label = zip_boundary@data[["ZIPCODE"]])
+                  label = zip_boundary@data[["ZIPCODE"]], group = 'zips') %>%
+      addSearchFeatures(targetGroups = 'zips', options = searchFeaturesOptions(zoom = 13, hideMarkerOnCollapse = TRUE)) %>%
+      addControl("<P><B>Hint!</B>Start your search with 3 to see a list of all zipcodes in Miami!</P>",
+                 position='bottomright')
   })
-  markerClusterOptions()
 }
 
 # Run the application 
