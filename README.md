@@ -1,1 +1,3 @@
-# poverty_and_transportation
+# Poverty, Population, and Transportation
+
+I will be mapping Miami bus routes and bus stops along with poverty levels and population by zip code. The goal of this project is to determine whether there exists a correlation between public transportation, poverty levels and population in Miami’s neighborhoods. I am going to be looking specifically at whether neighborhoods with high poverty rates have a larger coverage of public transportation. To do so, I will be looking at the numbers of routes in these neighborhoods along with the number of stops and comparing what I find with the routes and stops in most affluent neighborhoods or most populous. 
