@@ -96,7 +96,7 @@ server <- function(input, output) {
                                                       bringToFront = TRUE), 
                   label = zip_boundary@data[["ZIPCODE"]], group = 'zips') %>%
       addSearchFeatures(targetGroups = 'zips', options = searchFeaturesOptions(zoom = 13, hideMarkerOnCollapse = TRUE)) %>%
-      addControl("<P><B>Hint!</B>Start your search with 3 to see a list of all zipcodes in Miami!</P>",
+      addControl("<P><B>Hint!</B> Start your search with 3 to see a list of all zipcodes in Miami!</P>",
                  position='bottomright')
   })
 }
