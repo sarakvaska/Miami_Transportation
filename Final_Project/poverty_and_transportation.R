@@ -89,7 +89,7 @@ server <- function(input, output) {
                                                  html: '<div style=\"background-color:rgba(255, 255, 255, 1)\"><span>' + cluster.getChildCount() + '</div><span>',
                                                  className: 'marker-cluster'
                                                  });
-                                                 }"))) %>%
+                                                 }"), maxClusterRadius = 100)) %>%
       addPolygons(data=zip_boundary, opacity = 1, fillColor = "#00a1e4", 
                   weight = 3, color = "#2ab7ca ", fillOpacity = .25,
                   highlightOptions = highlightOptions(color = "white", weight = 2,
