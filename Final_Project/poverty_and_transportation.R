@@ -113,10 +113,25 @@ server <- function(input, output) {
     if(input$line == FALSE) {
       ggplotly(ggplot(data = zip_csv, 
                       aes_string(y = "bus_stops", x = input$x, color = "ZIP")) +
-                 geom_point() + 
+                 geom_point(if(input$x == "median_income") {
+                   aes(text = paste0("Zipcode: ", ZIP, "<br>Bus Stops: ", bus_stops, 
+                                     "<br>Median Income: ", 
+                                     format(((zip_csv$median_income)), 
+                                                                   nsmall=1, big.mark=",")))
+                 }
+                 else if (input$x == "median_population") {
+                   aes(text = paste0("Zipcode: ", ZIP, "<br>Bus Stops: ", bus_stops, 
+                                     "<br>Median Population: ", 
+                                     format(((zip_csv$median_population)), 
+                                            nsmall=1, big.mark=",")))
+                 }
+                 else {
+                   aes(text = paste0("Zipcode: ", ZIP, "<br>Bus Stops: ", bus_stops, 
+                                     "<br>Zipcode Area: ", Shape__Area))
+                 }) + 
                  labs(x = names(options[which(options == input$x)]), 
                       y = "Total Bus Stops", 
-                      color = "Zipcodes"))
+                      color = "Zipcodes") , tooltip = "text")
     }
     else {
       ggplotly(ggplot(data = zip_csv, 
