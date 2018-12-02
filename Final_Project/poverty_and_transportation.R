@@ -14,7 +14,6 @@ library(fs)
 library(dplyr)
 library(tools)
 library(tidyr)
-library(kableExtra)
 library(scales)
 library(lubridate)
 library(zoo)
@@ -25,6 +24,8 @@ library(data.table)
 library(ggrepel)
 library(maptools)
 library(leaflet)
+library(plotly)
+library(ggplot2)
 library(readxl)
 library(rgdal)
 library(leaflet.extras)
@@ -38,6 +39,12 @@ geojson1 <- jsonlite::fromJSON(bus_stops)
 zip_code <- "https://opendata.arcgis.com/datasets/fee863cb3da0417fa8b5aaf6b671f8a7_0.geojson"
 zip_boundary <- readOGR(dsn = zip_code, layer = "OGRGeoJSON")
 geojson2 <- jsonlite::fromJSON(zip_code)
+zip_csv <- read_csv("Zip_Code.csv")
+zip_csv$ZIP <- as.character(as.numeric(zip_csv$ZIP))
+
+options <- c("Median Income" = "median_income", 
+             "Median Population" = "median_population", 
+             "Total Zipcode Area" = "Shape__Area")
 # Define UI for application that draws a route map
 ui <- fluidPage(
    
@@ -54,12 +61,15 @@ ui <- fluidPage(
    # Output: Tabset with routes, stops, zipcodes
    tabsetPanel(type = "tabs",
                tabPanel("Routes", leafletOutput("map")),
-               tabPanel("Bus Stops and Zipcode Boundaries", leafletOutput("zipcodes")))
+               tabPanel("Bus Stops and Zipcode Boundaries", leafletOutput("zipcodes")), 
+               tabPanel("Scatterplots", 
+                        sidebarLayout(
+                          sidebarPanel(
+                            selectInput("x", label = "X-axis:", choices = c(options), 
+                               selected = "Median Income"), 
+                            checkboxInput("line", label = "Show Best Fit Line", value = FALSE)), 
+                            mainPanel(plotlyOutput("plots")))))
    )
-# function getColorZip(zip_boundary@data[["ZIPCODE"]]) {
-    #$('.random').css('color', localObj.color );
-    #previewColors(colorFactor(sample(colors(),88), domain = NULL), ZIP[1:88])
-# }
 geojson <- reactive({
   readLines("https://opendata.arcgis.com/datasets/a33afaedf9264a97844080839a6f5ec9_0.geojson") %>% 
   paste(collapse = "\n")
@@ -96,8 +106,26 @@ server <- function(input, output) {
                                                       bringToFront = TRUE), 
                   label = zip_boundary@data[["ZIPCODE"]], group = 'zips') %>%
       addSearchFeatures(targetGroups = 'zips', options = searchFeaturesOptions(zoom = 13, hideMarkerOnCollapse = TRUE)) %>%
-      addControl("<P><B>Hint!</B> Start your search with 3 to see a list of all zipcodes in Miami!</P>",
+      addControl("<P><B>Hint:</B> Start your search with 3 to see a list of all zipcodes in Miami!</P>",
                  position='bottomright')
+  })
+  output$plots <- renderLeaflet({
+    if(input$line == FALSE) {
+      ggplotly(ggplot(data = zip_csv, 
+                      aes_string(y = "bus_stops", x = input$x, color = "ZIP")) +
+                 geom_point() + 
+                 labs(x = names(options[which(options == input$x)]), 
+                      y = "Total Bus Stops", 
+                      color = "Zipcodes"))
+    }
+    else {
+      ggplotly(ggplot(data = zip_csv, 
+                      aes_string(y = "bus_stops", x = input$x, color = "ZIP")) +
+                 geom_point() + geom_smooth(aes(group = "ZIP"), se = FALSE) + 
+                 labs(x = names(options[which(options == input$x)]), 
+                      y = "Total Bus Stops", 
+                      color = "Zipcodes"))
+    }
   })
 }
 

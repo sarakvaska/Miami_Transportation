@@ -29,9 +29,9 @@ library(readxl)
 library(rgdal)
 library(janitor)
 # load data
-poverty_by_state <- read_excel("poverty_us.xls")
 miami_facts <- read_csv("poverty_Miami_Dade.csv")
-us_poverty <- read_excel("poverty_us.xls")
+zip_csv <- read_csv("Zip_Code.csv")
+zip_csv$ZIP <- as.character(as.numeric(zip_csv$ZIP))
 ```
 
 ### I am going to use the data I have downloaded to show transit routes and poverty levels of 4 cities around the country, and then determine if there exists a relationship between the two. I picked these cities based on this image from the US Census: 
