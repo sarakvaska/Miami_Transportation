@@ -36,8 +36,8 @@ zip_csv <- read_csv("Zip_Code.csv")
 zip_csv$ZIP <- as.character(as.numeric(zip_csv$ZIP))
 options <- c("Median Income" = "median_income", 
              "Median Population" = "median_population", 
-             "Total Zipcode Area" = "Shape__Area", 
-             "Income and Population" = "bus_stops")
+             "Income and Population" = "bus_stops", 
+             "Total Zipcode Area" = "Shape__Area")
 # Define UI for application that draws a route map
 ui <- fluidPage(
    
@@ -58,7 +58,7 @@ ui <- fluidPage(
                tabPanel("Scatterplots", 
                         sidebarLayout(
                           sidebarPanel(
-                            selectInput("x", label = "X-axis:", choices = c(options), 
+                            selectInput("x", label = "View by Factor that affects stop count:", choices = c(options), 
                                selected = "Median Income"),
                             checkboxInput("line", label = "Show Best Fit Line", value = FALSE)), 
                             mainPanel(plotlyOutput("plots")))))
