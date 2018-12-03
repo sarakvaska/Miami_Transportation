@@ -31,6 +31,7 @@ library(janitor)
 # load data
 miami_facts <- read_csv("poverty_Miami_Dade.csv")
 zip_csv <- read_csv("Zip_Code.csv")
+zip_stops <- read_csv("zip_stops.csv")
 zip_csv$ZIP <- as.character(as.numeric(zip_csv$ZIP))
 ```
 
