@@ -9,24 +9,17 @@
 
 library(shiny)
 library(tidyverse)
-library(stringr)
-library(fs)
 library(dplyr)
 library(tools)
 library(tidyr)
-library(scales)
-library(lubridate)
-library(zoo)
-library(sf)
 library(ggplot2)
 library(ggmap)
+library(scales)
 library(data.table)
 library(ggrepel)
 library(maptools)
 library(leaflet)
 library(plotly)
-library(ggplot2)
-library(readxl)
 library(rgdal)
 library(leaflet.extras)
 
@@ -41,7 +34,6 @@ zip_boundary <- readOGR(dsn = zip_code, layer = "OGRGeoJSON")
 geojson2 <- jsonlite::fromJSON(zip_code)
 zip_csv <- read_csv("Zip_Code.csv")
 zip_csv$ZIP <- as.character(as.numeric(zip_csv$ZIP))
-
 options <- c("Median Income" = "median_income", 
              "Median Population" = "median_population", 
              "Total Zipcode Area" = "Shape__Area")
@@ -115,31 +107,74 @@ server <- function(input, output) {
                       aes_string(y = "bus_stops", x = input$x, color = "ZIP")) +
                  geom_point(if(input$x == "median_income") {
                    aes(text = paste0("Zipcode: ", ZIP, "<br>Bus Stops: ", bus_stops, 
-                                     "<br>Median Income: ", 
+                                     "<br>Median Income: $", 
                                      format(((zip_csv$median_income)), 
-                                                                   nsmall=1, big.mark=",")))
+                                                                   nsmall=1, big.mark=","), 
+                                     "<br>Median Population: ", 
+                                     format(((zip_csv$median_population)), 
+                                            nsmall=1, big.mark=",")))
                  }
                  else if (input$x == "median_population") {
                    aes(text = paste0("Zipcode: ", ZIP, "<br>Bus Stops: ", bus_stops, 
                                      "<br>Median Population: ", 
                                      format(((zip_csv$median_population)), 
+                                            nsmall=1, big.mark=","), 
+                                     "<br>Median Income: $", 
+                                     format(((zip_csv$median_income)), 
                                             nsmall=1, big.mark=",")))
                  }
                  else {
                    aes(text = paste0("Zipcode: ", ZIP, "<br>Bus Stops: ", bus_stops, 
-                                     "<br>Zipcode Area: ", Shape__Area))
+                                     "<br>Zipcode Area: ", 
+                                     format(((zip_csv$Shape__Area)), 
+                                            nsmall=1, big.mark=",")))
                  }) + 
                  labs(x = names(options[which(options == input$x)]), 
                       y = "Total Bus Stops", 
-                      color = "Zipcodes") , tooltip = "text")
+                      color = "Zipcodes") + 
+                 if (input$x == "median_income") {
+                   scale_x_continuous(labels = scales::dollar)
+                 } else if (input$x == "median_population") {
+                   scale_x_continuous(labels = scales::comma)
+                 } else {
+                   scale_x_log10()
+                 }, tooltip = "text")
     }
     else {
       ggplotly(ggplot(data = zip_csv, 
                       aes_string(y = "bus_stops", x = input$x, color = "ZIP")) +
-                 geom_point() + geom_smooth(aes(group = "ZIP"), se = FALSE) + 
+                 geom_point(if(input$x == "median_income") {
+                   aes(text = paste0("Zipcode: ", ZIP, "<br>Bus Stops: ", bus_stops, 
+                                     "<br>Median Income: $", 
+                                     format(((zip_csv$median_income)), 
+                                            nsmall=1, big.mark=","), 
+                                     "<br>Median Population: ", 
+                                     format(((zip_csv$median_population)), 
+                                            nsmall=1, big.mark=",")))
+                 }
+                 else if (input$x == "median_population") {
+                   aes(text = paste0("Zipcode: ", ZIP, "<br>Bus Stops: ", bus_stops, 
+                                     "<br>Median Population: ", 
+                                     format(((zip_csv$median_population)), 
+                                            nsmall=1, big.mark=","), 
+                                     "<br>Median Income: $", 
+                                     format(((zip_csv$median_income)), 
+                                            nsmall=1, big.mark=",")))
+                 }
+                 else {
+                   aes(text = paste0("Zipcode: ", ZIP, "<br>Bus Stops: ", bus_stops, 
+                                     "<br>Zipcode Area: ", format(((zip_csv$Shape__Area)), 
+                                            nsmall=1, big.mark=",")))
+                 }) + geom_smooth(aes(group = "ZIP"), se = FALSE) + 
                  labs(x = names(options[which(options == input$x)]), 
                       y = "Total Bus Stops", 
-                      color = "Zipcodes"))
+                      color = "Zipcodes") + if (input$x == "median_income") {
+                        scale_x_continuous(labels = scales::dollar)
+                      } else if (input$x == "median_population") {
+                        scale_x_continuous(labels = scales::comma)
+                      } else {
+                        scale_x_log10()
+                      }, tooltip = "text")
     }
   })
 }
