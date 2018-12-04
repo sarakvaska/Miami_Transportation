@@ -23,6 +23,7 @@ library(leaflet)
 library(plotly)
 library(rgdal)
 library(leaflet.extras)
+library(stargazer)
 
 # bus routes is geojson data downloaded from Miami's Open Data Hub. More specifically, it 
 # contains the geojson data needed to map all the bus routes in Miami
@@ -101,7 +102,9 @@ ui <- fluidPage(
                           sidebarPanel(
                             selectInput("x", label = "View by Factor that affects stop count:", choices = c(options), 
                                selected = "Median Income"),
-                            checkboxInput("line", label = "Show Best Fit Line", value = FALSE)), 
+                            checkboxInput("line", label = "Show Best Fit Line", value = FALSE), 
+                            htmlOutput("regression_statement"),
+                            htmlOutput("regression_table")),
                             mainPanel(plotlyOutput("plots")))))
    )
 
@@ -407,6 +410,16 @@ server <- function(input, output) {
                    scale_y_continuous(labels = scales::dollar), tooltip = "text")
       }
     }
+  })
+  output$regression_statement <- renderUI ({
+    if(input$line == TRUE) {
+      h5("Correlation Between Variables:")
+    }
+  })
+  output$regression_table <- renderUI({
+    if(input$line == TRUE) {
+      as.character(cor(zip_csv[["median_population"]], zip_csv[[input$x]], use = "complete.obs"))
+      }
   })
 }
 
