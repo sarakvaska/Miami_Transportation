@@ -7,6 +7,7 @@
 #    http://shiny.rstudio.com/
 #
 
+# Import libraries that are used in app
 library(shiny)
 library(tidyverse)
 library(dplyr)
@@ -23,21 +24,64 @@ library(plotly)
 library(rgdal)
 library(leaflet.extras)
 
+# bus routes is geojson data downloaded from Miami's Open Data Hub. More specifically, it 
+# contains the geojson data needed to map all the bus routes in Miami
+
 bus_routes <- "https://opendata.arcgis.com/datasets/a33afaedf9264a97844080839a6f5ec9_0.geojson"
+
+# res_routes uses readOGR so that R can read the geojson data properly so that it can be made 
+# of use
+
 res_routes <- readOGR(dsn = bus_routes, layer = "OGRGeoJSON")
+
+# routes is a dataframe of the geojson bus_routes data
+
 routes <- jsonlite::fromJSON(bus_routes)
+
+# bus_stops is geojson data downloaded from Miami's Open Data Hub. More specifically, it 
+# contains the geojson data needed to map all the bus stop locations in Miami
+
 bus_stops <- "https://opendata.arcgis.com/datasets/021adadcf6854f59852ff4652ad90c11_0.geojson"
+
+# res_stops uses readOGR so that R can read the geojson data properly so that it can be made 
+# of use
+
 res_stops <- readOGR(dsn = bus_stops, layer = "OGRGeoJSON")
+
+# geojson1 is a dataframe of the geojson bus_stops data
+
 geojson1 <- jsonlite::fromJSON(bus_stops)
+
+# zip_code is geojson data downloaded from Miami's Open Data Hub. More specifically, it 
+# contains the geojson data needed to map all the zipcode boundaries in Miami
+
 zip_code <- "https://opendata.arcgis.com/datasets/fee863cb3da0417fa8b5aaf6b671f8a7_0.geojson"
+
+# zip_boundary uses readOGR so that R can read the geojson data properly so that it can be made 
+# of use
+
 zip_boundary <- readOGR(dsn = zip_code, layer = "OGRGeoJSON")
+
+# geojson2 is a dataframe of the geojson zip_code data
+
 geojson2 <- jsonlite::fromJSON(zip_code)
+
+# zip_csv is a dataframe containing all the data from the Zip_Code.csv file
 zip_csv <- read_csv("Zip_Code.csv")
+
+# This line of code turns the numeric ZIP column of the zip_csv file 
+# into a character column -- I did this so that the numbers on the scatterplots 
+# would appear correctly on the axii (as ascending instead of individually)
+
 zip_csv$ZIP <- as.character(as.numeric(zip_csv$ZIP))
+
+# options is a list of all the user can choose to visualize in the shiny app scatterplots
+
 options <- c("Median Income" = "median_income", 
              "Median Population" = "median_population", 
              "Income and Population" = "bus_stops", 
              "Total Zipcode Area" = "Shape__Area")
+
 # Define UI for application that draws a route map
 ui <- fluidPage(
    
