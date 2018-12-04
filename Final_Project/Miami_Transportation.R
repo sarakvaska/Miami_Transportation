@@ -67,13 +67,14 @@ geojson <- reactive({
   readLines("https://opendata.arcgis.com/datasets/a33afaedf9264a97844080839a6f5ec9_0.geojson") %>% 
   paste(collapse = "\n")
 })
+
 server <- function(input, output) {
   output$map <- renderLeaflet({
     leaflet() %>%
     addProviderTiles(providers$Esri.WorldImagery) %>%
     setView(lng=-80.191788, lat=25.761681, zoom = 10) %>%
     addGeoJSONv2(geojson(), weight = 3, color = "#00a1e4", opacity = 1, 
-                 fill = FALSE, labelProperty = "RTNAME",
+                 fill = FALSE, labelProperty = "RTNAME", popupProperty = "LINENAME",
                  highlightOptions = highlightOptions(weight = 2, color='white', 
                                                      fillOpacity = 1, opacity = 1,
                                                      bringToFront = TRUE, sendToBack = TRUE))
