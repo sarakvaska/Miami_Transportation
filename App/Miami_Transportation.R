@@ -82,9 +82,9 @@ options <- c("Median Income" = "median_income",
 ui <- fluidPage(theme = shinytheme("cerulean"),
               
    # Application title
-   navbarPage("What Factors Affect Transportation Coverage?",
-              tabPanel("Summary", tags$img(src = "https://www.anewteam.com/wp-content/uploads/miami.png", 
-                                           width = "100%"), tags$br(), tags$br(),
+   navbarPage("What Influences Public Transportation Coverage?",
+              tabPanel("Summary", HTML('<center><img src = "https://www.anewteam.com/wp-content/uploads/miami.png"
+                                        width = "85%" height = "85%"></center>'), tags$br(), tags$br(),
                        p("Throughout high school, I took the public bus almost everyday, and I noticed that 
                          the rate of people getting on and off would increase or decrease depending on areas of Miami, as 
                          well as the coverage of the bus stops. This struck my interest, and I created this app with the 
