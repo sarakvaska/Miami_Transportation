@@ -23,8 +23,9 @@ library(leaflet)
 library(plotly)
 library(rgdal)
 library(leaflet.extras)
-library(stargazer)
+library(shinythemes)
 
+    
 # bus routes is geojson data downloaded from Miami's Open Data Hub. More specifically, it 
 # contains the geojson data needed to map all the bus routes in Miami
 
@@ -78,35 +79,32 @@ options <- c("Median Income" = "median_income",
 
 # Define UI for application that draws shiny app
 
-ui <- fluidPage(
-   
+ui <- fluidPage(theme = shinytheme("cerulean"),
+              
    # Application title
-  
-   titlePanel("Observing the Factors that Affect Miami's Transportation"),
-   tags$a(href = "https://github.com/sarakvaska/poverty_and_transportation", "Github Code"),
-   p("Summary: I will be mapping Miami bus routes and bus stops along with poverty levels 
-     by zip code. The goal of this project is to determine whether there exists a correlation 
-     between public transportation and poverty levels in Miami’s neighborhoods. I am going to 
-     be looking specifically at whether neighborhoods with high poverty rates have a larger 
-     coverage of public transportation. To do so, I will be looking at the numbers of routes 
-     in these neighborhoods along with the number of stops and comparing what I find with the 
-     routes and stops in more affluent neighborhoods."),
+   navbarPage("What Factors Affect Miami's Transportation?",
+              tabPanel("Routes", mainPanel(leafletOutput("map"))),
+              tabPanel("Bus Stops and Zipcode Boundaries", mainPanel(leafletOutput("zipcodes"))), 
+              tabPanel("Visualized Data", 
+                       sidebarLayout(
+                         sidebarPanel(
+                           selectInput("x", label = "View by Factor:", choices = c(options), 
+                                       selected = "Median Income"),
+                           checkboxInput("line", label = "Show Best Fit Line", value = FALSE), 
+                           htmlOutput("correlation_statement"),
+                           htmlOutput("correlation")),
+                         mainPanel(plotlyOutput("plots"))))))
+   # tags$a(href = "https://github.com/sarakvaska/poverty_and_transportation", "Github Code"),
+   # p("Summary: I will be mapping Miami bus routes and bus stops along with poverty levels 
+   #   by zip code. The goal of this project is to determine whether there exists a correlation 
+   #   between public transportation and poverty levels in Miami’s neighborhoods. I am going to 
+   #   be looking specifically at whether neighborhoods with high poverty rates have a larger 
+   #   coverage of public transportation. To do so, I will be looking at the numbers of routes 
+   #   in these neighborhoods along with the number of stops and comparing what I find with the 
+   #   routes and stops in more affluent neighborhoods."),
    
    # Output: Tabset with route map, zipcode and stops map, and scatterplots
-   
-   tabsetPanel(type = "tabs",
-               tabPanel("Routes", leafletOutput("map")),
-               tabPanel("Bus Stops and Zipcode Boundaries", leafletOutput("zipcodes")), 
-               tabPanel("Visualized Data", 
-                        sidebarLayout(
-                          sidebarPanel(
-                            selectInput("x", label = "View by Factor that affects stop count:", choices = c(options), 
-                               selected = "Median Income"),
-                            checkboxInput("line", label = "Show Best Fit Line", value = FALSE), 
-                            htmlOutput("regression_statement"),
-                            htmlOutput("regression_table")),
-                            mainPanel(plotlyOutput("plots")))))
-   )
+  
 
 # read geojson bus route data through readlines and put into variable called geojson so that I am able
 # to use it in addGeoJSONv2, which will map it in my Shiny app
@@ -123,15 +121,15 @@ server <- function(input, output) {
   # output$map renders my leaflet map for routes and my UI (above) reads in the leafletOutput("map") from 
   # how I've defined it here so that it can be displayed in its repsective tab 
   output$map <- renderLeaflet({
-    
     # I am using leaflet in order to display my map widget 
     
     leaflet() %>%
-      
     # addProviderTiles displays the background of the map. providers$Esri.WorldImagery adds the OpenStreetMap
     # tiles so that it looks like users are viewing a satelite image
       
     addProviderTiles(providers$Esri.WorldImagery) %>%
+      
+    addFullscreenControl() %>%
       
     # setView is set on the lng and lat of Miami and zoomed into 10 so that users can 
     # see it from a place where it's viewable enough and information on the map isn't missing 
@@ -167,6 +165,7 @@ server <- function(input, output) {
       
       addProviderTiles(providers$Esri.WorldImagery) %>%
       
+      addFullscreenControl() %>%
       # Like in the previous map, setView is set on the lng and lat of Miami and zoomed into 10 so that users can 
       # see it from a place where it's viewable enough and information on the map isn't missing 
       
@@ -411,12 +410,17 @@ server <- function(input, output) {
       }
     }
   })
-  output$regression_statement <- renderUI ({
+  
+  # add line below checkbox for line of best input that says what the correlation between 
+  # the variables is 
+  output$correlation_statement <- renderUI ({
     if(input$line == TRUE) {
       h5("Correlation Between Variables:")
     }
   })
-  output$regression_table <- renderUI({
+  
+  # output the correlation between the variables 
+  output$correlation <- renderUI({
     if(input$line == TRUE) {
       as.character(cor(zip_csv[["median_population"]], zip_csv[[input$x]], use = "complete.obs"))
       }
