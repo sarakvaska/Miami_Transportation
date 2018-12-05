@@ -82,29 +82,80 @@ options <- c("Median Income" = "median_income",
 ui <- fluidPage(theme = shinytheme("cerulean"),
               
    # Application title
-   navbarPage("What Factors Affect Miami's Transportation?",
-              tabPanel("Routes", mainPanel(leafletOutput("map"))),
-              tabPanel("Bus Stops and Zipcode Boundaries", mainPanel(leafletOutput("zipcodes"))), 
+   navbarPage("What Factors Affect Transportation Coverage?",
+              tabPanel("Summary", tags$img(src = "https://www.anewteam.com/wp-content/uploads/miami.png", 
+                                           width = "100%"), tags$br(), tags$br(),
+                       p("Throughout high school, I took the public bus almost everyday, and I noticed that 
+                         the rate of people getting on and off would increase or decrease depending on areas of Miami, as 
+                         well as the coverage of the bus stops. This struck my interest, and I created this app with the 
+                         intention of exploring what factors (median income, median population, zipcode area, etc.) affect
+                         the coverage of Miami's public transportation."), 
+                       tags$br(), 
+                       p("To explore this topic, I used data from", tags$a(href = "http://gis-mdc.opendata.arcgis.com/", "Miami's Open Data Hub"), 
+                         "The links to the exact data I used are ", tags$a(href = "http://gis-mdc.opendata.arcgis.com/datasets/bus-route", "Bus Routes"), 
+                         "and ", tags$a(href = "http://gis-mdc.opendata.arcgis.com/datasets/bus-stop", "Bus Stops"), 
+                         ". Using this data, I mapped Miami's bus routes and bus stops. In my bus stop map, I added the layer of zipcode boundaries so that
+                         the count of stops per zipcode is distinguishable. I then graphed the relationship between median income, median population, median income
+                         and population, and zipcode area with the number of bus stops in all of Miami's zipcodes. The goal of this project was to determine whether 
+                         there exists a correlation between public transportation and poverty levels or population levels in Miami’s neighborhoods."),
+                       p("The other sources I used to create this project came from: ",
+                         tags$br(),
+                         tags$a(href = "http://www.miamidadematters.org/demographicdata/index/view?id=1469&localeTypeId=3", "Miami Dade Matters - Population Data per Zipcode"),
+                         tags$br(),
+                         tags$a(href = "http://www.miamidadematters.org/?module=demographicdata&controller=index&action=view&localeId=0&localeTypeId=3&tagFilter=0&id=2419", 
+                                "Miami Dade Matters - Income Data per Zipcode"),
+                         tags$br(),
+                         tags$a(href = "https://www.google.com/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwjHmMWglIjfAhUxTt8KHQ0iBFAQjRx6BAgBEAU&url=https%3A%2F%2Fanewteam.com%2Flocations%2Fcorporate-team-building-miami%2F&psig=AOvVaw2lLJpEsJAHXV9r8kXrBzhb&ust=1544081036780092", 
+                                "Miami Image")),
+                       p("View the code I wrote to create this project on ", tags$a(href = "https://github.com/sarakvaska/poverty_and_transportation", "Github"))),
+              
+              tabPanel("Routes", h2("Miami Bus Route Coverage"), p("This map is designed so that you can take a look at all of the bus routes in the Miami area. In total, there 
+                         are 112 bus routes. As the hint in the map says, if you hover over the routes, you can see the route number. If 
+                                   if you click on the route, you can see its name. The names of the routes, for the most part, say what area of Miami the bus travels."), 
+                       mainPanel(leafletOutput("map", height = 500, width = 600))),
+              tabPanel("Bus Stops and Zipcode Boundaries", h2("Bus Stops in Miami Zipcodes"), p("This map is designed so that you can 
+                                                                                                take a look at all of the bus stops in Miami, and using the zipcode boundaries,
+                                                                                                poke around to see where there are a large amount of stops or where there are none. As 
+                                                                                                the hint in the map says, every zipcode in Miami starts with a 3, so you can enter 3 in the search 
+                                                                                                bar to see a list of all zipcodes."), 
+                       mainPanel(leafletOutput("zipcodes", height = 500, width = 600))), 
               tabPanel("Visualized Data", 
+                       h2("Exploring Factors Affecting Miami's Transportation Coverage"),
                        sidebarLayout(
                          sidebarPanel(
                            selectInput("x", label = "View by Factor:", choices = c(options), 
                                        selected = "Median Income"),
                            checkboxInput("line", label = "Show Best Fit Line", value = FALSE), 
                            htmlOutput("correlation_statement"),
-                           htmlOutput("correlation")),
-                         mainPanel(plotlyOutput("plots"))))))
-   # tags$a(href = "https://github.com/sarakvaska/poverty_and_transportation", "Github Code"),
-   # p("Summary: I will be mapping Miami bus routes and bus stops along with poverty levels 
-   #   by zip code. The goal of this project is to determine whether there exists a correlation 
-   #   between public transportation and poverty levels in Miami’s neighborhoods. I am going to 
-   #   be looking specifically at whether neighborhoods with high poverty rates have a larger 
-   #   coverage of public transportation. To do so, I will be looking at the numbers of routes 
-   #   in these neighborhoods along with the number of stops and comparing what I find with the 
-   #   routes and stops in more affluent neighborhoods."),
-   
-   # Output: Tabset with route map, zipcode and stops map, and scatterplots
-  
+                           htmlOutput("correlation"),
+                           htmlOutput("note_and_summary")), 
+                         mainPanel(plotlyOutput("plots"))),
+                       tags$br(),
+                       p("Using these plots, I found that median population has the strongest correlation to bus stop count. Therefore, 
+                         this is probably how the city of Miami decides where to place the most bus stops and routes covering the area."),
+                       p("I came to this conclusion by visualizing factors of the data that I felt played the most role in 
+                         affecting the count of bus stops for certain zipcodes in Miami: Income, Population, and Area.
+                         When viewing by the Median Income factor, we can see that there seems to be a trend for a
+                         higher bus stop count in areas with a less median income. To confirm whether a relationship exists 
+                         between stop count and median income, I found the correlation: -0.291319779360426. Because this correlation 
+                         is negative, it signifies that for stop count and income, an increase in stop count is correlated with a
+                         decrease in median income for an area. Because the correlation is around -0.29, this indicates the relationship 
+                         between these variables is moderately negatively correlated."),
+                       p("The next factor is median population. Looking at this graph and the correlation we see between the bus stop count 
+                         and the median population, we can see that it's very strong - stronger than that of median income. The correlation gives
+                         us one, meaning that this relationship is perfectly positively correlated, so as the population increases, the bus stop
+                         count in an area increases."), 
+                      p("Next, we take a look at income and population. This scatterplot places median income on the y axis and median population
+                        on the x axis and colors the points by the amount of bus stops. The point of this scatterplot is to determine whether 
+                        there exists a correlation between the median income of a place and its population, which could provide insight for 
+                        whether transportation coverage is concentrated in the areas that need it most, where there are the most people who 
+                        make the least amount of money. This correlation was 0.533468158017823, signifying that there exists a moderately 
+                        positive correlation between median income and median population."), 
+                      p("The total zipcode area scatterplot intends to see whether area is a factor in the amount of bus stops. It aims to look at 
+                        the correlation between area coverage of a zipcode and the corresponding number of stop in that area. The correlation between 
+                        these variables is 0.0253083845097556, which is very small, so they are only correlated by a small amount - an amount too 
+                        insignificant to draw any conclusions from.")
+                       )))
 
 # read geojson bus route data through readlines and put into variable called geojson so that I am able
 # to use it in addGeoJSONv2, which will map it in my Shiny app
@@ -120,6 +171,7 @@ server <- function(input, output) {
   
   # output$map renders my leaflet map for routes and my UI (above) reads in the leafletOutput("map") from 
   # how I've defined it here so that it can be displayed in its repsective tab 
+  
   output$map <- renderLeaflet({
     # I am using leaflet in order to display my map widget 
     
@@ -148,7 +200,9 @@ server <- function(input, output) {
                  fill = FALSE, labelProperty = "RTNAME", popupProperty = "LINENAME",
                  highlightOptions = highlightOptions(weight = 2, color='white', 
                                                      fillOpacity = 1, opacity = 1,
-                                                     bringToFront = TRUE, sendToBack = TRUE))
+                                                     bringToFront = TRUE, sendToBack = TRUE)) %>%
+      addControl("<P><B>Hint:</B> Hovering on a route gives its number; clicking on a route gives the location it covers!</P>",
+                 position='bottomright')
   })
   
   # output$zipcodes takes in the leaflet map I've made and my UI (above) is able to identify it and display it 
@@ -424,6 +478,19 @@ server <- function(input, output) {
     if(input$line == TRUE) {
       as.character(cor(zip_csv[["median_population"]], zip_csv[[input$x]], use = "complete.obs"))
       }
+  })
+  
+  output$note_and_summary <- renderUI({
+    if(input$line == TRUE) {
+      h6("Note: The correlation coefficient is a measure that determines how closely related the measurements
+       of two variables are. When the correlation is greater than zero, it signifies that both variables 
+         move in the same direction or are correlated. When the correlation is 1, it signifies 
+         that when one variable moves higher or lower, the other variable moves in the same direction 
+         with the same magnitude. The closer the value of the correlation to 1, the stronger the linear relationship;
+         the farther the value of the correlation to 1, the weaker the linear relationship." %>%
+      tags$br() %>% tags$br() %>%
+      h6("Read more on ", tags$a(href = "https://www.investopedia.com/ask/answers/032515/what-does-it-mean-if-correlation-coefficient-positive-negative-or-zero.asp", "correlation")))
+    }
   })
 }
 
