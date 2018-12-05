@@ -64,8 +64,7 @@ zip_csv$ZIP <- as.character(as.numeric(zip_csv$ZIP))
 
 # options is a list of all the user can choose to visualize in the shiny app scatterplots
 options <- c("Median Income" = "median_income", 
-             "Median Population" = "median_population", 
-             "Income and Population" = "bus_stops", 
+             "Median Population" = "median_population",
              "Total Zip Code Area" = "Shape__Area")
 
 # Define UI for application that draws shiny app
@@ -142,12 +141,6 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                          and the median population, we can see that it's very strong - stronger than that of median income. The correlation gives
                          us one, meaning that this relationship is perfectly positively correlated, so as the population increases, the bus stop
                          count in an area increases."), 
-                      p("Next, we take a look at income and population. This scatterplot places median income on the y axis and median population
-                        on the x axis and colors the points by the amount of bus stops. The point of this scatterplot is to determine whether 
-                        there exists a correlation between the median income of a place and its population, which could provide insight for 
-                        whether transportation coverage is concentrated in the areas that need it most, where there are the most people who 
-                        make the least amount of money. This correlation was 0.533468158017823, signifying that there exists a moderately 
-                        positive correlation between median income and median population."), 
                       p("The total zip code area scatterplot intends to see whether area is a factor in the amount of bus stops. It aims to look at 
                         the correlation between area coverage of a zip code and the corresponding number of stop in that area. The correlation between 
                         these variables is 0.0253083845097556, which is very small, so they are only correlated by a small amount - an amount too 
@@ -267,11 +260,6 @@ server <- function(input, output) {
     
     # this graph will display if the checkbox for line of best fit is not clicked
     if(input$line == FALSE) {
-      
-      # this will display if "Income and Population" ("bus_stops") is not picked as the factor to 
-      # see on the plot 
-      if(input$x == "median_population" || input$x == "median_income" ||
-         input$x == "Shape__Area") {
         
         # In my scatterplots, the bus stop count is on the y axis and the user's chosen input
         # for the factor on the graph is on the x axis. The graph is colored by zip code so that 
@@ -337,40 +325,12 @@ server <- function(input, output) {
                      scale_x_log10()
                    }, tooltip = "text")
       }
-      
-      # if the user chooses to visualize by both income (y axis) and population (x axis), 
-      # with the legend according to the count of bus stops, this does that for them 
-      else {
-        ggplotly(ggplot(data = zip_csv, 
-                        aes_string(y = "median_income", x = "median_population", color = "bus_stops")) +
-                   
-                   # this displays information in the tooltip when they hover over a point 
-                   geom_point(aes(text = paste0("Zip Code: ", ZIP, "<br>Bus Stops: ", bus_stops, 
-                                       "<br>Median Income: $", 
-                                       format(((zip_csv$median_income)), 
-                                              nsmall=1, big.mark=","), 
-                                       "<br>Median Population: ", 
-                                       format(((zip_csv$median_population)), 
-                                              nsmall=1, big.mark=",")))) + 
-                   
-                   # the labels of this graph on the x axis and y axis and the color legend
-                   labs(x = "Median Population", 
-                        y = "Median Income", color = "Bus Stop Count") + 
-                   
-          # the scale of the x axis is in commas since it is showing population
-          # the scale of the y axis is in dollars since it is displaying income 
-          scale_x_continuous(labels = scales::comma) +
-          scale_y_continuous(labels = scales::dollar), tooltip = "text")
-      }
-    }
     
     # if the user chooses to add a line of best fit and they have chosen to visualize
     # population, income or area, this does it for them 
     # all of this code is the same as the above code, except for geom_smooth, 
     # which adds the best fit line 
     else {
-      if(input$x == "median_population" || input$x == "median_income" ||
-         input$x == "Shape__Area") {
         ggplotly(ggplot(data = zip_csv, 
                         aes_string(y = "bus_stops", x = input$x, color = "ZIP")) +
                    geom_point(if(input$x == "median_income") {
@@ -411,48 +371,22 @@ server <- function(input, output) {
                           scale_x_log10()
                         }, tooltip = "text")
       }
-      
-      # if the user chooses to add a line of best fit and they want to visualize 
-      # income and population, this does it for them 
-      # all the code is the same as if the user did not choose to add a line of best fit 
-      # except, since they did, geom_smooth is added into the code 
-      else {
-        ggplotly(ggplot(data = zip_csv, 
-                        aes_string(y = "median_income", x = "median_population", color = "bus_stops")) +
-                   geom_point(aes(text = paste0("Zip Code: ", ZIP, "<br>Bus Stops: ", bus_stops, 
-                                                "<br>Median Income: $", 
-                                                format(((zip_csv$median_income)), 
-                                                       nsmall=1, big.mark=","), 
-                                                "<br>Median Population: ", 
-                                                format(((zip_csv$median_population)), 
-                                                       nsmall=1, big.mark=",")))) + 
-                   
-                   # geom_smooth is line of best fit, labs
-                   # adds the labels to the x and y axis as well as to 
-                   # the color legend 
-                   # and scale x and scale y scales the x and y axis according to 
-                   # their prospective variables
-                   geom_smooth(aes(group = "ZIP"), se = FALSE, method = "lm") +
-                   labs(x = "Median Population", 
-                        y = "Median Income", color = "Bus Stop Count") + 
-                   scale_x_continuous(labels = scales::comma) +
-                   scale_y_continuous(labels = scales::dollar), tooltip = "text")
-      }
-    }
   })
   
   # add line below checkbox for line of best input that says what the correlation between 
   # the variables is 
   output$correlation_statement <- renderUI ({
     if(input$line == TRUE) {
-      h5("Correlation Between Variables:")
+      correlation <- round(cor(zip_csv[["median_population"]], zip_csv[[input$x]], use = "complete.obs"), 2)
+      h5(tags$em("Variable Correlation:"))
     }
   })
   
   # output the correlation between the variables 
   output$correlation <- renderUI({
     if(input$line == TRUE) {
-      as.character(cor(zip_csv[["median_population"]], zip_csv[[input$x]], use = "complete.obs"))
+      correlation <- round(cor(zip_csv[["median_population"]], zip_csv[[input$x]], use = "complete.obs"), 2)
+      as.character(correlation)
       }
   })
   
