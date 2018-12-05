@@ -1,4 +1,4 @@
-# Poverty, Population, and Transportation
+# What Factors Affect Transportation Coverage?
 
 ## Overview
 In high school, I took the public bus every single day. Overtime, I knew which stops had the most people waiting, and which areas of the city had the least stops. To me, it seemed as though the number of people riding and the distance between stops was positively correlated to neighborhoods where the median income was less. Is Miami's public transporation correlated to the median income of neighborhood zipcodes? This app was created to explore that question. As I continued downloading data and researching, I decided to explore whether population was a factor, and then I explored the relationship between income, population, and stops. I was particularly interested in Miami because I know that Miami has a good setup of public transportation, so I wanted to further explore how it may be set up according to certain variables. Overall, this project looks at why Miami's public transportation maps look the way they do, and how variables may affect how they look in the future!
