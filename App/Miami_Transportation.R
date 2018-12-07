@@ -71,23 +71,23 @@ options <- c("Median Income" = "median_income",
 ui <- fluidPage(theme = shinytheme("cerulean"),
                 
                 # Navbar title
-                navbarPage("What Influences Public Transportation Coverage?", 
+                navbarPage("What Influences Public Transportation Coverage?",
                            
                 # tabPanel adds a Summary tab to my app. This is where I explain my project and what tools I used to 
                 # build my project
                 tabPanel("Summary", HTML('<center><img src = "https://www.anewteam.com/wp-content/uploads/miami.png"
                                         width = "85%" height = "85%"></center>'), tags$br(), tags$br(), 
-                p("Throughout high school, I took the public bus almost everyday, and I noticed that 
-                  the rate of people getting on and off would increase or decrease depending on areas of Miami, as 
-                  well as the coverage of the bus stops. This struck my interest, and I created this app with the 
-                  intention of exploring what factors (median income, median population, zip code area, etc.) impact
+                p("In high school, I took the public bus almost everyday. I noticed (or thought I noticed) that 
+                  the rate of people getting on and off would increase or decrease depending on areas of Miami. I also though that the 
+                  coverage of bus stops fluctuated between areas, too. This struck my interest, sp I created this app with the 
+                  intention of exploring what factors (median income, median population, or area) impact
                   the coverage of Miami's public transportation."), tags$br(), 
                 p("To explore this topic, I used data from", tags$a(href = "http://gis-mdc.opendata.arcgis.com/", "Miami's Open Data Hub"), 
-                  "The links to the exact data I used are ", tags$a(href = "http://gis-mdc.opendata.arcgis.com/datasets/bus-route", "Bus Routes"), 
+                  ". The links to the exact data I used are ", tags$a(href = "http://gis-mdc.opendata.arcgis.com/datasets/bus-route", "Bus Routes"), 
                   "and ", tags$a(href = "http://gis-mdc.opendata.arcgis.com/datasets/bus-stop", "Bus Stops"), 
                   ". Using this data, I mapped Miami's bus routes and bus stops. In my bus stop map, I added the layer of zip code boundaries so that
-                  the count of stops per zip code is distinguishable. I then graphed the relationship between median income, median population, median income
-                  and population, and zip code area with the number of bus stops in all of Miami's zip codes. The goal of this project was to determine whether 
+                  the count of stops per zip code is distinguishable. I then graphed the relationship between median income, median population, and zip code area 
+                  with the number of bus stops in all of Miami's zip codes. The goal of this project was to determine whether 
                   there exists a correlation between public transportation and poverty levels or population levels in Miami’s neighborhoods."),
                 p("The other sources I used to create this project came from: ", tags$br(),
                 tags$a(href = "http://www.miamidadematters.org/demographicdata/index/view?id=1469&localeTypeId=3", 
@@ -133,9 +133,9 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                          impacting the count of bus stops for certain zip codes in Miami: Income, Population, and Area.
                          When viewing by the Median Income factor, we can see that there seems to be a trend for a
                          higher bus stop count in areas with a less median income. To confirm whether a relationship exists 
-                         between stop count and median income, I found the correlation: -0.291319779360426. Because this correlation 
+                         between stop count and median income, I found the correlation: -0.29. Because this correlation 
                          is negative, it signifies that for stop count and income, an increase in stop count is correlated with a
-                         decrease in median income for an area. Because the correlation is around -0.29, this indicates the relationship 
+                         decrease in median income for an area. Because the correlation is -0.29, this indicates the relationship 
                          between these variables is moderately negatively correlated."),
                        p("The next factor is median population. Looking at this graph and the correlation we see between the bus stop count 
                          and the median population, we can see that it's very strong - stronger than that of median income. The correlation gives
@@ -143,7 +143,7 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                          count in an area increases."), 
                       p("The total zip code area scatterplot intends to see whether area is a factor in the amount of bus stops. It aims to look at 
                         the correlation between area coverage of a zip code and the corresponding number of stop in that area. The correlation between 
-                        these variables is 0.0253083845097556, which is very small, so they are only correlated by a small amount - an amount too 
+                        these variables is 0.03, which is very small, so they are only correlated by a small amount - an amount too 
                         insignificant to draw any conclusions from.")
                        )))
 
@@ -242,7 +242,38 @@ server <- function(input, output) {
                                                       bringToFront = TRUE),
                   # this label makes it so that if a user is hovering within/on a zip code boundary, the name 
                   # of the zip code they are hovering over is seen 
-                  label = zip_boundary@data[["ZIPCODE"]], group = 'zips') %>%
+                  label = paste0(zip_boundary@data[["ZIPCODE"]], c(": Homestead, Florida City", ": Hialeah", 
+                                                                   ": Bay Harbor Islands, Bal Harbour, Surfside, North Miami, Indian Creek", 
+                                                                   ": Key Largo, North Key Largo", ": Miami", ": Miami", ": Miami Shores", ": Kendall", 
+                                                                   ": Miami, Miami Beach", ": Miami", ": Miami, Miami Beach, Fisher Island", ": Miami, Hialeah, 
+                                                                   West Little River, Gladeview, Pinewood, Westview", ": Doral, Sweetwater", 
+                                                                   ": Hialeah, Hialeah Gardens, Miami Lakes", ": Flordia City", ": Palm Springs North, 
+                                                                   Country Club", ": Hialeah, Miami Lakes, Hialeah Gardens", ": South Miami, West Miami, Westchester, 
+                                                                   Glenvar Heights, Olympia Heights, Coral Terrace", ": Miami, Coral Gables", 
+                                                                   ": North Miami, North Miami Beach, Golden Glades", ": Homestead Base", ": Doral, Medley", 
+                                                                   ": Miami", ": Cutler Bay", ": Miami Gardens, North Miami Beach, Golden Glades, Andover, Norland", 
+                                                                   ": Miami", ": Kendall West", ": Miami", ": Miami", ": Doral", ": Coral Gables, Kendall, South Miami, 
+                                                                   Glenvar Heights, Olympia Heights", ": Miami", ": Doral, Miami Springs, Virginia Gardens, Medley", 
+                                                                   ": Miami", ": Westchester, Olympia Heights, Westwood Lakes, University Park, Sunset", ": Redland", 
+                                                                   ": North Miami, Miami Shores, Biscayne Park, Sweetwater, Golden Glades", ": North Miami Beach, Golden Glades, Ojus", 
+                                                                   ": North Miami Beach, Miami Gardens, Ives Estates, Ojus", ": North Miami, Golden Glades, Pinewood, Westview", 
+                                                                   ": Kendall, Palmetto Bay, Richmond Heights", ": Sunny Isles Beach, Aventura, North Miami Beach, North Miami, Golden Beach, Ojus", 
+                                                                   ": The Hammocks, Country Walk", ": Miami Beach, North Bay Village", ": Aventura, Ojus", ": Kendall West", 
+                                                                   ": Miami Gardens,  Lake Lucerne", ": Miami Gardens", ": Kendall, The Hammocks, Country Walk, Kendale Lakes, 
+                                                                   Richmond Heights, The Crossings, Three Lakes", ": Opa-locka, Miami Gardens, Bunche Park", 
+                                                                   ": Miami", ": Miami", ": Miami, Hialeah, Miami Springs, Liberty Square", ": Cutler Bay, South Miami Heights, 
+                                                                   Lakes by the Bay, Goulds", ": Palmetto Bay, Coral Gables", ": Miami", ": Richmond West", ": Miami", 
+                                                                   ": Miami", ": Miami, Miami Beach", ": Miami", ": Miami", ": Miami, Coral Gables", ": Miami, Miami Shores, El Portal", 
+                                                                   ": Miami, Coral Gables", ": Miami, Miami Shores, El Portal, West Little River, Gladeview, Pinewood", 
+                                                                   ": Kendall, Coral Gables, Pinecrest", ": Miami, Key Biscayne", ": Kendall, Sunset", ": Goulds, Princeton, Silver Palm", 
+                                                                   ": Hialeah", ": Hialeah, Miami Lakes, Miami Gardens", ": North Miami, Miami Shores, Golden Glades, Pinewood", 
+                                                                   ": Kendall, Kendall Lakes", ": Tamiami", ": Westchester, Sweetwater, University Park, Fountainbleau", 
+                                                                   ": Doral, Fountainbleau, Sweetwater", ": Tamiami, Kendale Lakes, University Park", ": Homestead", 
+                                                                   ": Hialeah, Opa-locka,  West Little River", ": Miami", ": South Miami Heights, Richmond West, Goulds, Quail Heights",
+                                                                   ": Palmetto Bay, Cutler Bay, West Perrine, South Miami Heights, Palmetto Estates, Cutler",
+                                                                   ": Homestead, Leisure City, Homestead Base", ": Homestead Base, Princeton, Naranja", 
+                                                                   ": Miami, Coral Gables, West Miami, Westchester, Coral Terrace, Fountainbleau", ": Miami, Doral, Fountainbleau")),
+                  group = 'zips') %>%
       
       # addSearchFeatures is added to the map so that users can search a specific zip code from the map widget 
       # and the map will take you to whichever one you've searched
@@ -250,7 +281,7 @@ server <- function(input, output) {
       
       # addControl adds a hint to the bottom of the map so that users know that all Miami zipcodes begin with the number 
       # 3 and can start their search from there
-      addControl("<P><B>Hint:</B> Start your search with 3 to see a list of all zip codes in Miami!</P>",
+      addControl("<P><B>Hint:</B> Search any zip code or city in Miami! All zip codes start with 3.</P>",
                  position='bottomright')
   })
   
