@@ -23,6 +23,7 @@ library(leaflet)
 library(plotly)
 library(rgdal)
 library(leaflet.extras)
+library(sp)
 library(shinythemes)
 
     
@@ -109,7 +110,8 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                 tabPanel("Bus Stops and Zip Code Boundaries", h2("Bus Stops in Miami Zip Codes"), 
                 p("This map is designed so that you can take a look at all of the bus stops in Miami, and using the zip code boundaries, 
                    poke around to see where there are a large amount of stops or where there are none. As the hint in the map says, 
-                   every zip code in Miami starts with a 3, so you can enter 3 in the search bar to see a list of all zip codes."), 
+                   every zip code in Miami starts with a 3, so you can enter 3 in the search bar to see a list of all zip codes. You can also
+                   search any city!"), 
                        mainPanel(leafletOutput("zipcodes", height = 500))), 
                 
                 # this tabPanel created my visualized data tab where I placed the scatterplots with the information I found and 
@@ -241,7 +243,8 @@ server <- function(input, output) {
                   highlightOptions = highlightOptions(color = "white", weight = 2,
                                                       bringToFront = TRUE),
                   # this label makes it so that if a user is hovering within/on a zip code boundary, the name 
-                  # of the zip code they are hovering over is seen 
+                  # of the zip code and the cities it bounds are seen. Since the json data does not have the 
+                  # city names in zipcodes, i added this in using paste0
                   label = paste0(zip_boundary@data[["ZIPCODE"]], c(": Homestead, Florida City", ": Hialeah", 
                                                                    ": Bay Harbor Islands, Bal Harbour, Surfside, North Miami, Indian Creek", 
                                                                    ": Key Largo, North Key Largo", ": Miami", ": Miami", ": Miami Shores", ": Kendall", 
