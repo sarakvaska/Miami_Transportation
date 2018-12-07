@@ -110,7 +110,7 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                 p("This map is designed so that you can take a look at all of the bus stops in Miami, and using the zip code boundaries, 
                    poke around to see where there are a large amount of stops or where there are none. As the hint in the map says, 
                    every zip code in Miami starts with a 3, so you can enter 3 in the search bar to see a list of all zip codes."), 
-                       mainPanel(leafletOutput("zipcodes", height = 500, width = 600))), 
+                       mainPanel(leafletOutput("zipcodes", height = 500))), 
                 
                 # this tabPanel created my visualized data tab where I placed the scatterplots with the information I found and 
                 # the correlation between variables
@@ -260,77 +260,84 @@ server <- function(input, output) {
     
     # this graph will display if the checkbox for line of best fit is not clicked
     if(input$line == FALSE) {
-        
-        # In my scatterplots, the bus stop count is on the y axis and the user's chosen input
-        # for the factor on the graph is on the x axis. The graph is colored by zip code so that 
-        # they all show up individually 
-        ggplotly(ggplot(data = zip_csv, 
-                        aes_string(y = "bus_stops", x = input$x, color = "ZIP")) +
-                   
-                   # if user chooses to see median income on their scatterplot, the tooltip 
-                   # of the plot will display relevant, formatted information
-                   # (such as zip code, bus stop count, median income, and median pop. 
-                   # when they hover over points 
-                   # i included median population and median income so that users could explore if there
-                   # exists a relationship between the two and their coverage of transportation
-                   geom_point(if(input$x == "median_income") {
-                     aes(text = paste0("Zip Code: ", ZIP, "<br>Bus Stops: ", bus_stops, 
-                                       "<br>Median Income: $", 
-                                       format(((zip_csv$median_income)), 
-                                              nsmall=1, big.mark=","), 
-                                       "<br>Median Population: ", 
-                                       format(((zip_csv$median_population)), 
-                                              nsmall=1, big.mark=",")))
-                   }
-                   
-                   # if user chooses to see median population on their scatterplot, the tooltip 
-                   # of the plot will display relevant, formatted information (the same as in 
-                   # the median income scatterplot when they hover over points 
-                   else if (input$x == "median_population") {
-                     aes(text = paste0("Zip Code: ", ZIP, "<br>Bus Stops: ", bus_stops, 
-                                       "<br>Median Population: ", 
-                                       format(((zip_csv$median_population)), 
-                                              nsmall=1, big.mark=","), 
-                                       "<br>Median Income: $", 
-                                       format(((zip_csv$median_income)), 
-                                              nsmall=1, big.mark=",")))
-                   }
-                   
-                   # if the user chooses to see the zipcode area and whether the count of bus stops is influenced
-                   # by area, then I will display the relevant information in the tooltip according to this
-                   else {
-                     aes(text = paste0("Zip Code: ", ZIP, "<br>Bus Stops: ", bus_stops, 
-                                       "<br>Zip Code Area: ", 
-                                       format(((zip_csv$Shape__Area)), 
-                                              nsmall=1, big.mark=",")))
-                   }) + 
-                   
-                   # the labels of the scatterplots
-                   # the axis will be labeled according to the variable the user visualizes 
-                   # the y axis will be labeled total bus stops, since this variable does not change 
-                   # the color legend is labeled Zipcodes 
-                   labs(x = names(options[which(options == input$x)]), 
-                        y = "Total Bus Stops", 
-                        color = "Zip Codes") + 
-                   
-                   # the scale of the x axis is fitted according to the variable
-                   # the median income appears as the dollar scale
-                   # the median population appears as thousands with a comma 
-                   # the zip area appears as a log because the numbers are so large
-                   if (input$x == "median_income") {
-                     scale_x_continuous(labels = scales::dollar)
-                   } else if (input$x == "median_population") {
-                     scale_x_continuous(labels = scales::comma)
-                   } else {
-                     scale_x_log10()
-                   }, tooltip = "text")
+        if(input$x == "median_income" || input$x == "median_population") {
+          # In my scatterplots, the bus stop count is on the y axis and the user's chosen input
+          # for the factor on the graph is on the x axis. The graph is colored by zip code so that 
+          # they all show up individually 
+          ggplotly(ggplot(data = zip_csv, 
+                          aes_string(y = "bus_stops", x = input$x, color = "ZIP")) +
+                     
+                     # if user chooses to see median income on their scatterplot, the tooltip 
+                     # of the plot will display relevant, formatted information
+                     # (such as zip code, bus stop count, median income, and median pop. 
+                     # when they hover over points 
+                     # i included median population and median income so that users could explore if there
+                     # exists a relationship between the two and their coverage of transportation
+                     geom_point(if(input$x == "median_income") {
+                       aes(text = paste0("Zip Code: ", ZIP, "<br>Bus Stops: ", bus_stops, 
+                                         "<br>Median Income: $", 
+                                         format(((zip_csv$median_income)), 
+                                                nsmall=1, big.mark=","), 
+                                         "<br>Median Population: ", 
+                                         format(((zip_csv$median_population)), 
+                                                nsmall=1, big.mark=",")))
+                     }
+                     
+                     # if user chooses to see median population on their scatterplot, the tooltip 
+                     # of the plot will display relevant, formatted information (the same as in 
+                     # the median income scatterplot when they hover over points 
+                     else if (input$x == "median_population") {
+                       aes(text = paste0("Zip Code: ", ZIP, "<br>Bus Stops: ", bus_stops, 
+                                         "<br>Median Population: ", 
+                                         format(((zip_csv$median_population)), 
+                                                nsmall=1, big.mark=","), 
+                                         "<br>Median Income: $", 
+                                         format(((zip_csv$median_income)), 
+                                                nsmall=1, big.mark=",")))
+                     }) +
+                  
+                     # the labels of the scatterplots
+                     # the axis will be labeled according to the variable the user visualizes 
+                     # the y axis will be labeled total bus stops, since this variable does not change 
+                     # the color legend is labeled Zipcodes 
+                     labs(x = names(options[which(options == input$x)]), 
+                          y = "Total Bus Stops", 
+                          color = "Zip Codes") + 
+                     
+                     # the scale of the x axis is fitted according to the variable
+                     # the median income appears as the dollar scale
+                     # the median population appears as thousands with a comma 
+                     # the zip area appears as a log because the numbers are so large
+                     if (input$x == "median_income") {
+                       scale_x_continuous(labels = scales::dollar)
+                     } else if (input$x == "median_population") {
+                       scale_x_continuous(labels = scales::comma)
+                     } else {
+                       scale_x_log10()
+                     }, tooltip = "text")
+        }
+        else {
+          ggplotly(ggplot(data = zip_csv, 
+                          aes_string(y = input$x, x = "bus_stops", color = "ZIP")) + 
+                     geom_point(aes(text = paste0("Zip Code: ", ZIP, "<br>Bus Stops: ", bus_stops, 
+                                         "<br>Zip Code Area: ", 
+                                         nsmall=1, big.mark=","))) +
+            # the labels of the scatterplots
+            # the axis will be labeled according to the variable the user visualizes 
+            # the y axis will be labeled total bus stops, since this variable does not change 
+            # the color legend is labeled Zipcodes 
+            labs(x = "Total Bus Stops", 
+                 y = names(options[which(options == input$x)]), 
+                 color = "Zip Codes") + scale_y_log10(), tooltip = "text") 
+        }
+      
       }
-    
     # if the user chooses to add a line of best fit and they have chosen to visualize
     # population, income or area, this does it for them 
     # all of this code is the same as the above code, except for geom_smooth, 
     # which adds the best fit line 
     else {
+      if(input$x == "median_income" || input$x == "median_population") {
         ggplotly(ggplot(data = zip_csv, 
                         aes_string(y = "bus_stops", x = input$x, color = "ZIP")) +
                    geom_point(if(input$x == "median_income") {
@@ -350,27 +357,34 @@ server <- function(input, output) {
                                        "<br>Median Income: $", 
                                        format(((zip_csv$median_income)), 
                                               nsmall=1, big.mark=",")))
-                   }
-                   else {
-                     aes(text = paste0("Zip Code: ", ZIP, "<br>Bus Stops: ", bus_stops, 
-                                       "<br>Zip Code Area: ", format(((zip_csv$Shape__Area)), 
-                                                                    nsmall=1, big.mark=",")))
-                   }) + 
-                   
+                   }) +
                    # geom_smooth is line of best fit, labs adds labels to the axii of 
                    # the graphs, and scale x scales the x axis depending on the 
                    # variable being looked at
                    geom_smooth(aes(group = "ZIP"), se = FALSE, method = "lm") + 
-                   labs(x = names(options[which(options == input$x)]), 
-                        y = "Total Bus Stops", 
-                        color = "Zip Codes") + if (input$x == "median_income") {
-                          scale_x_continuous(labels = scales::dollar)
-                        } else if (input$x == "median_population") {
-                          scale_x_continuous(labels = scales::comma)
-                        } else {
-                          scale_x_log10()
-                        }, tooltip = "text")
+                     labs(x = names(options[which(options == input$x)]), 
+                          y = "Total Bus Stops", 
+                          color = "Zip Codes") + if (input$x == "median_income") {
+                            scale_x_continuous(labels = scales::dollar)
+                          } else if (input$x == "median_population") {
+                            scale_x_continuous(labels = scales::comma)
+                          }, tooltip = "text")
       }
+      else {
+        ggplotly(ggplot(data = zip_csv, 
+                        aes_string(y = input$x, x = "bus_stops", color = "ZIP")) +
+                   geom_point(aes(text = paste0("Zip Code: ", ZIP, "<br>Bus Stops: ", bus_stops, 
+                            "<br>Zip Code Area: ", format(((zip_csv$Shape__Area)), 
+                                                          nsmall=1, big.mark=",")))) +
+                   # geom_smooth is line of best fit, labs adds labels to the axii of 
+                   # the graphs, and scale x scales the x axis depending on the 
+                   # variable being looked at
+                   geom_smooth(aes(group = "ZIP"), se = FALSE, method = "lm") + 
+                   labs(x = "Total Bus Stops", 
+                        y = names(options[which(options == input$x)]), 
+                        color = "Zip Codes") + scale_y_log10(), tooltip = "text")
+      }
+    }
   })
   
   # add line below checkbox for line of best input that says what the correlation between 
