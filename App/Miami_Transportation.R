@@ -72,12 +72,12 @@ options <- c("Median Income" = "median_income",
 ui <- fluidPage(theme = shinytheme("cerulean"),
                 
                 # Navbar title
-                navbarPage("What Influences Public Transportation Coverage?",
+                navbarPage("What Influences Public Transportation Coverage in Miami?",
                            
                 # tabPanel adds a Summary tab to my app. This is where I explain my project and what tools I used to 
                 # build my project
-                tabPanel("Summary", HTML('<center><img src = "https://www.anewteam.com/wp-content/uploads/miami.png"
-                                        width = "85%" height = "85%"></center>'), tags$br(), tags$br(), 
+                tabPanel("Summary", HTML('<center><img src = "https://pbs.twimg.com/media/DrcR_P9WsAAnMAG.jpg:large"
+                                        width = "100%" height = "100%"></center>'), tags$br(), tags$br(), 
                 p("In high school, I took the public bus almost everyday. I noticed (or thought I noticed) that 
                   the rate of people getting on and off would increase or decrease depending on areas of Miami. I also though that the 
                   coverage of bus stops fluctuated between areas, too. This struck my interest, sp I created this app with the 
@@ -96,8 +96,8 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                 tags$br(),
                 tags$a(href = "http://www.miamidadematters.org/?module=demographicdata&controller=index&action=view&localeId=0&localeTypeId=3&tagFilter=0&id=2419", 
                        "Miami Dade Matters - Income Data per Zip Code"), tags$br(),
-                tags$a(href = "https://www.google.com/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwjHmMWglIjfAhUxTt8KHQ0iBFAQjRx6BAgBEAU&url=https%3A%2F%2Fanewteam.com%2Flocations%2Fcorporate-team-building-miami%2F&psig=AOvVaw2lLJpEsJAHXV9r8kXrBzhb&ust=1544081036780092", 
-                       "Miami Image")),
+                tags$a(href = "https://twitter.com/volvoshine/status/1060336025661259776", 
+                       "Image of Miami")),
                 p("View the code I wrote to create this project on ", tags$a(href = "https://github.com/sarakvaska/poverty_and_transportation", "Github"))),
                 
                 # this tabPanel creates the routes tab. In this panel, I explain how to use the routes map as well as the purpose of looking at the routes
