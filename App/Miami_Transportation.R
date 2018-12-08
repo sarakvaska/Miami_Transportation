@@ -78,15 +78,15 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                 # build my project
                 tabPanel("Summary", HTML('<center><img src = "https://pbs.twimg.com/media/DrcR_P9WsAAnMAG.jpg:large"
                                         width = "100%" height = "100%"></center>'), tags$br(), tags$br(), 
-                p("In high school, I took the public bus almost everyday. I noticed (or thought I noticed) that 
-                  the rate of people getting on and off would increase or decrease depending on areas of Miami. I also though that the 
-                  coverage of bus stops fluctuated between areas, too. This struck my interest, sp I created this app with the 
+                p("In high school, I took the public bus almost everyday. I noticed -- or thought I noticed -- that 
+                  the rate of people getting on and off would increase or decrease depending on the wealthier areas of Miami. I also thought that the 
+                  coverage of bus stops fluctuated between areas of wealth. This struck my interest, so I created this app with the 
                   intention of exploring what factors (median income, median population, or area) impact
-                  the coverage of Miami's public transportation."), tags$br(), 
-                p("To explore this topic, I used data from", tags$a(href = "http://gis-mdc.opendata.arcgis.com/", "Miami's Open Data Hub"), 
-                  ". The links to the exact data I used are ", tags$a(href = "http://gis-mdc.opendata.arcgis.com/datasets/bus-route", "Bus Routes"), 
-                  "and ", tags$a(href = "http://gis-mdc.opendata.arcgis.com/datasets/bus-stop", "Bus Stops"), 
-                  ". Using this data, I mapped Miami's bus routes and bus stops. In my bus stop map, I added the layer of zip code boundaries so that
+                  the coverage of Miami's public transportation."), 
+                p("To explore this topic, I used data from", tags$a(href = "http://gis-mdc.opendata.arcgis.com/", "Miami's Open Data Hub."), 
+                  "The links to the exact data I used are ", tags$a(href = "http://gis-mdc.opendata.arcgis.com/datasets/bus-route", "Bus Routes"), 
+                  "and ", tags$a(href = "http://gis-mdc.opendata.arcgis.com/datasets/bus-stop", "Bus Stops."), 
+                  "Using this data, I mapped Miami's bus routes and bus stops. In my bus stop map, I added the layer of zip code boundaries so that
                   the count of stops per zip code is distinguishable. I then graphed the relationship between median income, median population, and zip code area 
                   with the number of bus stops in all of Miami's zip codes. The goal of this project was to determine whether 
                   there exists a correlation between public transportation and poverty levels or population levels in Miami’s neighborhoods."),
