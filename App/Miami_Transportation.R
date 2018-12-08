@@ -98,11 +98,12 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                        "Miami Dade Matters - Income Data per Zip Code"), tags$br(),
                 tags$a(href = "https://twitter.com/volvoshine/status/1060336025661259776", 
                        "Image of Miami")),
-                p("View the code I wrote to create this project on ", tags$a(href = "https://github.com/sarakvaska/poverty_and_transportation", "Github"))),
+                p("View the code I wrote to create this project on ", tags$a(href = "https://github.com/sarakvaska/poverty_and_transportation", "Github!"))),
                 
                 # this tabPanel creates the routes tab. In this panel, I explain how to use the routes map as well as the purpose of looking at the routes
                 tabPanel("Routes", h2("Miami Bus Route Coverage"), p("This map is designed so that you can take a look at all of the bus routes in the Miami area. In total, there 
-                         are 112 bus routes. As the hint in the map says, if you hover over the routes, you can see the route number. If if you click on the route, you can see its name. The names of the routes, for the most part, say what area of Miami the bus travels."), 
+                         are 112 bus routes. As the hint in the map says, if you hover over the routes, you can see the route number. If if you click on the route, you can see its name. 
+                         The names of the routes, for the most part, say what area of Miami the bus travels to and from."), 
                        mainPanel(leafletOutput("map", height = 500))),
                 
                 # this tabPanel creates the bus stops/zip code boundaries map. Here, I explain how users can poke around to see how many stops are 
