@@ -55,7 +55,9 @@ zip_code <- "https://opendata.arcgis.com/datasets/fee863cb3da0417fa8b5aaf6b671f8
 zip_boundary <- readOGR(dsn = zip_code, layer = "OGRGeoJSON")
 
 
-# zip_csv is a dataframe containing all the data from the Zip_Code.csv file
+# zip_csv is a dataframe containing all the data from the Zip_Code.csv file 
+# in my data I added the bus_stop column and counted all the bus stops by using the geom_cluster 
+# function so that I could create my scatterplots 
 zip_csv <- read_csv("Zip_Code.csv")
 
 # This line of code turns the numeric ZIP column of the zip_csv file 
@@ -144,7 +146,7 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                          and the median population, we can see that it's very strong - stronger than that of median income. The correlation gives
                          us one, meaning that this relationship is perfectly positively correlated, so as the population increases, the bus stop
                          count in an area increases."), 
-                      p("The total zip code area scatterplot intends to see whether area is a factor in the amount of bus stops. It aims to look at 
+                       p("The total zip code area scatterplot intends to see whether area is a factor in the amount of bus stops. It aims to look at 
                         the correlation between area coverage of a zip code and the corresponding number of stop in that area. The correlation between 
                         these variables is 0.03, which is very small, so they are only correlated by a small amount - an amount too 
                         insignificant to draw any conclusions from.")
